@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarun Goyal - Solution Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFDFD;
+            color: #1F2937;
+        }
+        /* Custom scrollbar for a cleaner look */
+        body::-webkit-scrollbar {
+            width: 8px;
+        }
+        body::-webkit-scrollbar-track {
+            background: #FDFDFD;
+        }
+        body::-webkit-scrollbar-thumb {
+            background-color: #93C5FD;
+            border-radius: 20px;
+            border: 2px solid #FDFDFD;
+        }
+        .timeline-item-content {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .timeline-item.open .timeline-item-content {
+            max-height: 1000px; /* A large value to allow content to expand */
+            opacity: 1;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+        }
+        .skill-btn.active {
+            background-color: #4338CA;
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .modal {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        /* Fade-in animation for hero section */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #hero > * {
+            animation: fadeInDown 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        #hero h1 { animation-delay: 0.2s; }
+        #hero p:nth-of-type(1) { animation-delay: 0.4s; }
+        #hero p:nth-of-type(2) { animation-delay: 0.6s; }
+        #hero .flex { animation-delay: 0.8s; }
+        
+        /* Scroll-to-top button */
+        #scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        #scroll-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/90 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-indigo-600">TG</a>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#about" class="text-gray-600 hover:text-indigo-600 transition duration-300">About</a>
+                <a href="#expertise" class="text-gray-600 hover:text-indigo-600 transition duration-300">Expertise</a>
+                <a href="#experience" class="text-gray-600 hover:text-indigo-600 transition duration-300">Experience</a>
+                <a href="#future" class="text-gray-600 hover:text-indigo-600 transition duration-300">Future</a>
+                <a href="#toolbox" class="text-gray-600 hover:text-indigo-600 transition duration-300">Toolbox</a>
+                <button id="contact-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300 shadow-md">Contact Me</button>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#about" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">About</a>
+            <a href="#expertise" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Expertise</a>
+            <a href="#experience" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Experience</a>
+            <a href="#future" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Future</a>
+            <a href="#toolbox" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Toolbox</a>
+            <button id="contact-btn-mobile" class="block w-full text-left py-2 px-4 text-sm text-gray-600 hover:bg-gray-100">Contact Me</button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-20">
+
+        <!-- Hero Section -->
+        <section id="hero" class="text-center mb-20 md:mb-32">
+            <div class="w-32 h-32 rounded-full mx-auto mb-6 overflow-hidden border-4 border-indigo-200 shadow-lg">
+                <img src="https://placehold.co/128x128/9CA3AF/FFFFFF?text=TG" alt="Profile Picture Placeholder" class="w-full h-full object-cover">
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 mb-4">Tarun Goyal</h1>
+            <p class="text-xl md:text-2xl text-indigo-600 font-semibold mb-6">Solution Architect & Data Migration Specialist</p>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600 mb-8">
+                With **over 11 years of experience**, I specialize in designing and delivering complex data migration solutions. I am a leader who bridges the gap between business needs and technical execution to drive successful enterprise-level transformations.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <button id="hero-contact-btn" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-lg transform hover:scale-105">Get In Touch</button>
+                <a href="https://www.linkedin.com/in/tarungoyalconsultant" target="_blank" class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 border border-indigo-200 shadow-lg transform hover:scale-105">View LinkedIn</a>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="mb-20 md:mb-32 max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">My Professional Journey</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+                    A brief overview of my career, from establishing foundational skills to my current leadership role. My focus is on delivering strategic data solutions that enable global business success.
+                </p>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 transition duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+                <p class="text-lg text-slate-700 leading-relaxed">
+                    My career began with a focus on core data migration and ETL development, where I honed my skills in SAP BODS and Information Steward. Over the years, this evolved into a solution-architect role, where I now specialize in designing end-to-end migration strategies for complex environments like **SAP S/4 HANA** and **SAP SuccessFactors**. My work at Harman has allowed me to lead global initiatives, solving country-specific data challenges and unifying disparate systems into a single, cohesive framework. I'm a leader who not only architects solutions but also guides technical teams to deliver with precision and quality.
+                </p>
+            </div>
+        </section>
+
+        <!-- Core Expertise Section -->
+        <section id="expertise" class="mb-20 md:mb-32">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Core Expertise & Impact</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+                    A visual representation of my key skills. My expertise in data migration and architecture is the foundation for driving successful, large-scale projects.
+                </p>
+            </div>
+            <div class="chart-container">
+                <canvas id="expertiseChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Professional Experience Section -->
+        <section id="experience" class="mb-20 md:mb-32">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Career Milestones</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+                    A timeline of my key roles and accomplishments. Click on any entry to expand for more details.
+                </p>
+                <div id="filter-buttons" class="mt-6 flex justify-center flex-wrap gap-2">
+                    <button class="skill-btn active px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition duration-200" data-skill="all">All Projects</button>
+                    <button class="skill-btn px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition duration-200" data-skill="SuccessFactors">SAP SuccessFactors</button>
+                    <button class="skill-btn px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition duration-200" data-skill="S/4 HANA">S/4 HANA</button>
+                    <button class="skill-btn px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition duration-200" data-skill="ECC/CRM">ECC / CRM</button>
+                </div>
+            </div>
+
+            <div id="timeline-container" class="relative max-w-5xl mx-auto">
+                <div class="absolute hidden md:block left-1/2 -translate-x-1/2 top-0 h-full w-0.5 bg-indigo-200"></div>
+                <!-- Mobile timeline line -->
+                <div class="absolute md:hidden left-4 top-0 h-full w-0.5 bg-indigo-200"></div>
+                <!-- Timeline items will be injected here by JS -->
+            </div>
+        </section>
+        
+        <!-- Future Skills Section -->
+        <section id="future" class="mb-20 md:mb-32">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Future-Proofing My Skills</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+                    Committed to continuous learning, I am actively exploring and planning to acquire certifications in key cloud and data technologies to expand my solution architect capabilities.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="w-16 h-16 mx-auto mb-4 text-indigo-600">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 11.233V20m-3.464-6.464l-3.535-3.536M12 4v7.233m3.464 6.464l3.535-3.536M12 11.233l-3.464-6.464M12 11.233l3.464-6.464M12 20a8 8 0 100-16 8 8 0 000 16z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">AWS</h3>
+                    <p class="text-slate-600 text-sm">
+                        Deepening expertise in cloud infrastructure and services for scalable data solutions.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="w-16 h-16 mx-auto mb-4 text-indigo-600">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18.36 6.64a9 9 0 11-12.73 0M12 2a10 10 0 00-4 18.25V22l3.45-2.25H12a10 10 0 000-20zm-2 11v-4m4 0v4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Azure</h3>
+                    <p class="text-slate-600 text-sm">
+                        Learning Microsoft's cloud ecosystem for robust data platform integration and management.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="w-16 h-16 mx-auto mb-4 text-indigo-600">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6m-9 11v-4m-2 0h4m2 4V7m-2 0h4m-4 5v-2m-4 2h4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">SAC</h3>
+                    <p class="text-slate-600 text-sm">
+                        Developing skills in SAP Analytics Cloud for advanced data visualization and planning.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="w-16 h-16 mx-auto mb-4 text-indigo-600">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h3l2 3h12a2 2 0 012 2v10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Datasphere</h3>
+                    <p class="text-slate-600 text-sm">
+                        Mastering the next-generation data warehouse for integrating SAP and non-SAP data.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Toolbox Section -->
+        <section id="toolbox" class="mb-12 md:mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">My Technical Toolbox</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+                    The primary tools, technologies, and methodologies I use to build and deliver robust data solutions.
+                </p>
+            </div>
+            <div id="toolbox-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Toolbox items will be injected here by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 p-4 invisible opacity-0">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md scale-95 transform transition-transform duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Get In Touch</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p class="text-slate-600 mb-6">Feel free to reach out to me via the form below or connect on LinkedIn.</p>
+            <form id="contact-form">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" id="name" name="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+                    <textarea id="message" name="message" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required></textarea>
+                </div>
+                <div class="text-right">
+                    <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-lg transform hover:scale-105">Send Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-white">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <h3 class="text-2xl font-bold mb-4">Let's Build Something Great Together</h3>
+            <p class="mb-6 text-slate-400">I'm always open to discussing new projects, creative ideas, or opportunities.</p>
+            <button id="footer-contact-btn" class="bg-indigo-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition duration-300 transform hover:scale-105">Contact Me</button>
+            <div class="mt-8 text-sm text-slate-500">
+                &copy; <span id="current-year"></span> Tarun Goyal. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll-to-top button -->
+    <button id="scroll-to-top" class="p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data
+            const experienceData = [
+                {
+                    role: 'Lead Consultant',
+                    company: 'HARMAN CONNECTED SERVICES',
+                    client: 'Schlumberger',
+                    period: 'Nov 2021 – Present',
+                    skills: ['SuccessFactors', 'ECC/CRM'],
+                    details: [
+                        'Architected and led the SAP HR HCM payroll data migration strategy for Schlumberger, overseeing the consolidation of employee payroll data from disparate SAP and Non-SAP systems into a unified Global Framework.',
+                        'Spearheaded the implementation of the Global Framework, a standardized system that streamlined operations and facilitated a single-database approach for multiple countries.',
+                        'Designed and implemented end-to-end data pipelines using SAP BODS, focusing on complex extraction, transformation, and validation of payroll data for seamless loading into both SAP SuccessFactors and SAP HR systems.',
+                        'Acted as the primary liaison between technical and functional teams, gathering business and functional requirements and translating them into a clear technical roadmap for project execution.',
+                        'Resolved complex, country-specific business rules and requirements that impacted data migration, ensuring compliance and accuracy for a global workforce.',
+                        'Managed the efficient loading of diverse data types using the LTMC loading mechanism, including Vendors Master, Equipment Master, and other critical master data objects.'
+                    ]
+                },
+                {
+                    role: 'Lead Enterprise Solutions',
+                    company: 'UST-GLOBAL',
+                    client: 'Walmart',
+                    period: 'Aug 2020 - Nov 2021',
+                    skills: ['ECC/CRM'],
+                    details: [
+                        'Spearheaded the GSM GNFR project, architecting the data migration from a legacy Ariba system to a new Ariba platform, ensuring minimal disruption and data integrity.',
+                        'Provided strategic direction for data analysis and validation, comparing historical DB2 data with the new platform using BODS, Python scripts, AQL queries, and SQL queries.',
+                        'Led the Coupa project, where I designed the data quality and remediation framework using Information Steward and SQL Queries to refine source data for migration.',
+                        'Directed the end-to-end migration of data from both SAP and Non-SAP sources to the SAP COUPA system, utilizing SAP BODS for transformation and SAP Information Steward for quality assurance.'
+                    ]
+                },
+                {
+                    role: 'Sr. Software Developer',
+                    company: 'BIRLASOFT LIMITED',
+                    client: 'Stryker',
+                    period: 'Dec 2019 - June 2020',
+                    skills: ['S/4 HANA'],
+                    details: [
+                        'Provided strategic direction as an SAP BODS consultant, leading the data migration from Oracle to a new S/4 HANA environment.',
+                        'Implemented the SAP Best Practice BODS Job Control Framework, establishing standardized processes for efficient and reliable job execution.',
+                        'Spearheaded the delivery of key master data objects, including Equipment Master, Classification, and EDI Partner Functions, ensuring data integrity and successful deployment.'
+                    ]
+                },
+                {
+                    role: 'Sr. Software Engineer',
+                    company: 'HCL TECHNOLOGIES',
+                    client: 'Multiple Clients (Avon, LeasePlan, Staples, OMWM)',
+                    period: 'Nov 2013 – Dec 2019',
+                    skills: ['ECC/CRM'],
+                    details: [
+                        'Architected and implemented ETL processes for extracting and transforming data from diverse sources (flat files, XML, Excel) and loading into target databases.',
+                        'Led the end-to-end migration of critical SAP objects, including Vendors, Service Material, Rental Contracts, and Open Sales Orders across various client projects.',
+                        'Functioned as a code reviewer, providing critical guidance and quality control to junior team members to maintain code integrity.',
+                        'Actively participated in change management processes, collaborating with project managers and CAB teams for seamless coordination of production changes.'
+                    ]
+                }
+            ];
+
+            const toolboxData = [
+                {
+                    category: 'ETL Tools & Apps',
+                    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M12 22a10 10 0 100-20 10 10 0 000 20z"/></svg>',
+                    tools: ['SAP Data Services (BODS)', 'SAP Information Steward', 'ETL Solution Architecture']
+                },
+                {
+                    category: 'Data Migration Techniques',
+                    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v8m-4-4h8"/></svg>',
+                    tools: ['IDOC', 'BAPI/RFC', 'LSMW', 'LTMC']
+                },
+                {
+                    category: 'Source & Target Systems',
+                    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M12 8v8m-4-4h8"/></svg>',
+                    tools: ['SAP S/4 HANA', 'SAP ECC/CRM', 'SAP SuccessFactors', 'SQL/Oracle']
+                },
+                {
+                    category: 'Databases & Languages',
+                    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19c-3.866 0-7-2.686-7-6s3.134-6 7-6 7 2.686 7 6-3.134 6-7 6zM5 13H2m20 0h-3M12 19v3M12 1H7M12 1v4"/></svg>',
+                    tools: ['SQL', 'Oracle', 'Toad', 'SQL Server Management Studio']
+                },
+                {
+                    category: 'Methodologies',
+                    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l-6-6 6-6"/></svg>',
+                    tools: ['Agile', 'Waterfall']
+                },
+                 {
+                    category: 'Project Management',
+                    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v6h6"/></svg>',
+                    tools: ['Jira', 'HP ALM', 'MKS Integrity Tool', 'Q-TEST']
+                }
+            ];
+
+            // Mobile Menu
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            mobileMenu.querySelectorAll('a, button').forEach(el => el.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+            // Contact Modal Logic
+            const contactModal = document.getElementById('contact-modal');
+            const openModalBtns = ['contact-btn', 'contact-btn-mobile', 'hero-contact-btn', 'footer-contact-btn'].map(id => document.getElementById(id));
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            
+            function openModal() {
+                contactModal.classList.remove('invisible', 'opacity-0');
+                contactModal.classList.add('visible', 'opacity-100');
+                document.querySelector('#contact-modal > div').classList.remove('scale-95');
+                document.querySelector('#contact-modal > div').classList.add('scale-100');
+            }
+            function closeModal() {
+                contactModal.classList.remove('visible', 'opacity-100');
+                contactModal.classList.add('invisible', 'opacity-0');
+                document.querySelector('#contact-modal > div').classList.remove('scale-100');
+                document.querySelector('#contact-modal > div').classList.add('scale-95');
+            }
+            openModalBtns.forEach(btn => btn.addEventListener('click', openModal));
+            closeModalBtn.addEventListener('click', closeModal);
+            contactModal.addEventListener('click', (e) => {
+                if (e.target === contactModal) {
+                    closeModal();
+                }
+            });
+            document.getElementById('contact-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Instead of alert, show a custom message
+                const form = e.target;
+                const message = document.createElement('div');
+                message.className = 'p-4 bg-green-100 text-green-700 rounded-md text-center mb-4';
+                message.textContent = 'Thank you for your message! I will get in touch with you shortly.';
+                form.prepend(message);
+                
+                setTimeout(() => {
+                    closeModal();
+                    form.reset();
+                    message.remove();
+                }, 3000);
+            });
+
+            // Chart.js Expertise Chart
+            const ctx = document.getElementById('expertiseChart').getContext('2d');
+            const expertiseChart = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Data Migration', 'Solution Architecture', 'SAP SuccessFactors', 'Data Governance', 'S/4 HANA', 'ETL Development'],
+                    datasets: [{
+                        label: 'Years of Experience',
+                        data: [11, 11, 6, 11, 7, 11], // Updated data to reflect 11+ years of experience
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(99, 102, 241, 0.7)',
+                            'rgba(129, 140, 248, 0.7)',
+                            'rgba(165, 180, 252, 0.7)',
+                            'rgba(199, 210, 254, 0.7)',
+                            'rgba(224, 231, 255, 0.7)'
+                        ],
+                        borderColor: 'white',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            pointLabels: {
+                                display: true,
+                                centerPointLabels: true,
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1E293B',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 6,
+                        }
+                    }
+                }
+            });
+
+            // Populate Timeline
+            const timelineContainer = document.getElementById('timeline-container');
+            function renderTimeline(filter = 'all') {
+                timelineContainer.innerHTML = '';
+                const filteredData = filter === 'all' ? experienceData : experienceData.filter(item => item.skills.includes(filter));
+
+                if (filteredData.length === 0) {
+                    timelineContainer.innerHTML = `<div class="text-center text-slate-500">No projects match this skill.</div>`;
+                    return;
+                }
+
+                filteredData.forEach((item, index) => {
+                    const sideClass = index % 2 === 0 ? 'md:left-0' : 'md:right-0';
+                    const detailsHTML = item.details.map(detail => `<li class="mb-2">${detail}</li>`).join('');
+                    const timelineItem = `
+                        <div class="timeline-item mb-12 flex relative" data-skills="${item.skills.join(' ')}">
+                            <!-- Timeline dot -->
+                            <div class="absolute -left-2 md:left-1/2 md:-ml-2 top-2 w-4 h-4 bg-indigo-500 rounded-full border-4 border-white z-10"></div>
+                            <div class="w-full md:w-1/2 p-6 rounded-lg shadow-md border border-gray-200 bg-white cursor-pointer hover:shadow-xl transition duration-300 transform md:hover:scale-105 ${sideClass}">
+                                <p class="text-sm text-gray-500 mb-1">${item.period}</p>
+                                <h3 class="text-xl font-bold text-gray-800">${item.role}</h3>
+                                <p class="text-md text-indigo-600 font-semibold">${item.company} <span class="text-gray-500 font-normal">for ${item.client}</span></p>
+                                <div class="timeline-item-content mt-4">
+                                    <ul class="list-disc list-inside text-slate-600 space-y-2">
+                                        ${detailsHTML}
+                                    </ul>
+                                </div>
+                                <div class="text-xs text-indigo-500 font-semibold mt-4 expand-text">Click to Expand</div>
+                            </div>
+                        </div>
+                    `;
+                    timelineContainer.innerHTML += timelineItem;
+                });
+
+                document.querySelectorAll('.timeline-item > div:first-of-type').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const parentItem = card.closest('.timeline-item');
+                        parentItem.classList.toggle('open');
+                        const expandText = card.querySelector('.expand-text');
+                        if (parentItem.classList.contains('open')) {
+                            expandText.textContent = 'Click to Collapse';
+                        } else {
+                            expandText.textContent = 'Click to Expand';
+                        }
+                    });
+                });
+            }
+            renderTimeline();
+
+            document.querySelectorAll('.skill-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.skill-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const skill = button.dataset.skill;
+                    renderTimeline(skill);
+                });
+            });
+
+            // Populate Toolbox
+            const toolboxGrid = document.getElementById('toolbox-grid');
+            toolboxData.forEach(item => {
+                const toolsHTML = item.tools.map(tool => `<li class="text-slate-600">${tool}</li>`).join('');
+                const toolboxItem = `
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 transform hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-indigo-100 p-3 rounded-full mr-4 text-indigo-600 w-12 h-12 flex items-center justify-center">
+                                ${item.icon}
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">${item.category}</h3>
+                        </div>
+                        <ul class="space-y-2 pl-2">
+                            ${toolsHTML}
+                        </ul>
+                    </div>
+                `;
+                toolboxGrid.innerHTML += toolboxItem;
+            });
+
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            // Scroll-to-top button logic
+            const scrollToTopBtn = document.getElementById('scroll-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
